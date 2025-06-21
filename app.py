@@ -62,26 +62,25 @@ else:
         selected = exercises[:5]
 
         # Generate AI Images
-for name, desc in selected:
-    st.markdown(f"### 🏋️ {name}")
-    st.caption(desc)
+        for name, desc in selected:
+            st.markdown(f"### 🏋️ {name}")
+            st.caption(desc)
 
-    prompt = f"An elderly person doing {name}, realistic, safe indoor setting, natural lighting"
+            prompt = f"An elderly person doing {name}, realistic, safe indoor setting, natural lighting"
 
-    with st.spinner("Generating image..."):
-        try:
-            response = client.images.generate(
-                model="dall-e-3",
-                prompt=prompt,
-                n=1,
-                size="1024x1024"
-            )
-            image_url = response.data[0].url if response.data and response.data[0].url else None
+            with st.spinner("Generating image..."):
+                try:
+                    response = client.images.generate(
+                        model="dall-e-3",
+                        prompt=prompt,
+                        n=1,
+                        size="1024x1024"
+                    )
+                    image_url = response.data[0].url if response.data and response.data[0].url else None
 
-            if image_url:
-                st.image(image_url, caption=name)
-            else:
-                st.warning("Image URL was not returned. Try again or check your OpenAI usage limits.")
-        except Exception as e:
-            st.error(f"Image generation failed: {e}")
-
+                    if image_url:
+                        st.image(image_url, caption=name)
+                    else:
+                        st.warning("Image URL was not returned. Try again or check your OpenAI usage limits.")
+                except Exception as e:
+                    st.error(f"Image generation failed: {e}")
