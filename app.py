@@ -51,4 +51,29 @@ else:
         if responses["grip"]:
             exercises.append(("Towel Squeeze", "Boosts grip strength and forearm control."))
         if responses["chair_stand"]:
-            exercises.append(("Sit-to-Stand",
+            exercises.append(("Sit-to-Stand", "Trains leg strength for daily mobility."))
+        if responses["low_activity"]:
+            exercises.append(("Seated Toe Taps", "Light cardio to build movement endurance."))
+        if responses["stiff"]:
+            exercises.append(("Neck Rotations", "Relieves stiffness in upper spine."))
+        if responses["shoulders"]:
+            exercises.append(("Arm Circles", "Improves shoulder mobility and control."))
+
+        selected = exercises[:5]
+
+        # Generate AI Images
+        for name, desc in selected:
+            st.markdown(f"### 🏋️ {name}")
+            st.caption(desc)
+
+            prompt = f"An elderly person doing {name}, realistic, safe indoor setting, natural lighting"
+            try:
+                response = client.images.generate(
+                    model="dall-e-3",
+                    prompt=prompt,
+                    n=1,
+                    size="512x512"
+                )
+                st.image(response.data[0].url, caption=name)
+            except Exception as e:
+                st.warning(f"Image generation failed: {e}")
