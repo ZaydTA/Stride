@@ -1,6 +1,6 @@
 import streamlit as st
 from openai import OpenAI
-from utils import some_function
+from .utils import get_exercises
 
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
@@ -27,4 +27,3 @@ def generate_recommendations():
                 st.image(url)
         except Exception as e:
             st.warning(f"Image error: {e}")
-
