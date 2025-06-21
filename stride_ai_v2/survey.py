@@ -1,5 +1,5 @@
 import streamlit as st
-from .config import questions
+from config import questions
 
 def run_survey():
     if 'responses' not in st.session_state:
