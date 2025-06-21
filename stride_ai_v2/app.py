@@ -1,5 +1,5 @@
 import streamlit as st
-from survey import run_survey
+from .survey import run_survey
 from recommend import generate_recommendations
 
 st.set_page_config(page_title="Stride AI", layout="centered")
