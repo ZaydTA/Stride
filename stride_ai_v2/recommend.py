@@ -1,6 +1,6 @@
 import streamlit as st
 from openai import OpenAI
-from .utils import get_exercises
+from utils import get_exercises
 
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
