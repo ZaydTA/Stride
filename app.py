@@ -72,7 +72,8 @@ else:
                     model="dall-e-3",
                     prompt=prompt,
                     n=1,
-                    size="512x512"
+                    size="1024x1024"
+
                 )
                 st.image(response.data[0].url, caption=name)
             except Exception as e:
