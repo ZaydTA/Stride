@@ -1,34 +1,36 @@
-import streamlit as st
-from config import questions
-
-def run_survey():
-    if 'responses' not in st.session_state:
-        st.session_state.responses = {}
-        st.session_state.q_index = 0
-
-    q_idx = st.session_state.q_index
-
-    if q_idx < len(questions):
-        q = questions[q_idx]
-        st.subheader(f"{q_idx+1}. {q['text']}")
-
-        input_key = f"input_{q_idx}"
-        response = None
-
-        if q['type'] == 'slider':
-            response = st.slider(q['label'], q['min'], q['max'], q['default'], key=input_key)
-        elif q['type'] == 'checkbox':
-            response = st.checkbox(q['label'], key=input_key)
-        elif q['type'] == 'text':
-            response = st.text_input(q['label'], key=input_key)
-        elif q['type'] == 'select':
-            response = st.selectbox(q['label'], q['options'], key=input_key)
-
-        if st.button("Next"):
-            st.session_state.responses[q['key']] = response
-            st.session_state.q_index += 1
-            st.experimental_rerun()
-    else:
-        if st.button("Submit Survey"):
-            st.session_state.survey_complete = True
-            st.experimental_rerun()
+questions = [
+    {
+        "key": "balance",
+        "text": "Do you have difficulty balancing while standing?",
+        "type": "checkbox",
+        "label": "Yes"
+    },
+    {
+        "key": "joint_pain",
+        "text": "Do you experience joint pain?",
+        "type": "checkbox",
+        "label": "Yes"
+    },
+    {
+        "key": "walk_time",
+        "text": "How many minutes can you walk comfortably?",
+        "type": "slider",
+        "label": "Walking time (minutes)",
+        "min": 0,
+        "max": 60,
+        "default": 15
+    },
+    {
+        "key": "activity",
+        "text": "How would you describe your current activity level?",
+        "type": "select",
+        "label": "Choose one",
+        "options": ["Low", "Moderate", "High"]
+    },
+    {
+        "key": "goal",
+        "text": "What is your main goal for exercising?",
+        "type": "text",
+        "label": "Type your goal (e.g., improve balance, build strength)"
+    }
+]
