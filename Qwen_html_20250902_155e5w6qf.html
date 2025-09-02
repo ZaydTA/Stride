@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Who's in Debt?</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        header {
+            background: #4a5568;
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            padding: 40px;
+            max-height: calc(100vh - 200px);
+            overflow-y: auto;
+        }
+        
+        .debt-display {
+            text-align: center;
+            padding: 40px 20px;
+            margin: 20px 0;
+            border-radius: 15px;
+            background: #f8f9fa;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .debt-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #2d3748;
+        }
+        
+        .debt-amount {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin: 20px 0;
+            color: #e53e3e;
+        }
+        
+        .debt-info {
+            font-size: 1.4rem;
+            color: #4a5568;
+            margin: 15px 0;
+        }
+        
+        .neutral {
+            color: #4a5568;
+        }
+        
+        .positive {
+            color: #38a169;
+        }
+        
+        .negative {
+            color: #e53e3e;
+        }
+        
+        .transaction-form {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin-top: 30px;
+        }
+        
+        .form-title {
+            text-align: center;
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            color: #2d3748;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+        
+        .input-row {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .input-col {
+            flex: 1;
+        }
+        
+        select, input {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        select:focus, input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .btn-clear {
+            background: #e53e3e;
+        }
+        
+        .btn-clear:hover {
+            background: #c53030;
+        }
+        
+        .history {
+            margin-top: 40px;
+        }
+        
+        .history h3 {
+            text-align: center;
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            color: #2d3748;
+        }
+        
+        .transaction-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+        }
+        
+        .transaction-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+        
+        .transaction-info {
+            flex: 1;
+        }
+        
+        .transaction-title {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+        
+        .transaction-details {
+            font-size: 0.9rem;
+            color: #718096;
+        }
+        
+        .transaction-amount {
+            font-weight: 700;
+            color: #4a5568;
+            min-width: 100px;
+            text-align: right;
+        }
+        
+        .no-transactions {
+            text-align: center;
+            padding: 30px;
+            color: #718096;
+            font-style: italic;
+        }
+        
+        .instructions {
+            margin-top: 20px;
+            padding: 15px;
+            background: #ebf8ff;
+            border-radius: 10px;
+            border-left: 4px solid #3182ce;
+        }
+        
+        .instructions h3 {
+            color: #2c5282;
+            margin-bottom: 10px;
+        }
+        
+        .instructions p {
+            color: #4a5568;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        
+        @media (max-width: 600px) {
+            .main-content {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .input-row {
+                flex-direction: column;
+            }
+            
+            .debt-amount {
+                font-size: 2.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 id="title">Who's in Debt?</h1>
+            <p class="subtitle">Tracking expenses between Zayd and Sam</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="debt-display">
+                <div class="debt-title">Current Balance</div>
+                <p class="debt-info neutral">No debts recorded yet</p>
+            </div>
+            
+            <div class="transaction-form">
+                <h2 class="form-title">Add New Transaction</h2>
+                <div class="form-group">
+                    <label for="payer">Who Paid?</label>
+                    <select id="payer">
+                        <option value="zayd">Zayd</option>
+                        <option value="sam">Sam</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <input type="text" id="description" placeholder="What was this for?">
+                </div>
+                
+                <div class="form-group">
+                    <label for="amount">Amount ($)</label>
+                    <div class="input-row">
+                        <div class="input-col">
+                            <input type="number" id="amount" min="0.01" step="0.01" placeholder="0.00">
+                        </div>
+                        <div class="input-col">
+                            <button id="add-transaction">Add Transaction</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button id="clear-all" class="btn-clear">Clear All Data</button>
+                </div>
+            </div>
+            
+            <div class="history">
+                <h3>Transaction History</h3>
+                <div class="transaction-list" id="transaction-list">
+                    <div class="no-transactions">No transactions yet</div>
+                </div>
+            </div>
+            
+            <div class="instructions">
+                <h3>How to Share with Sam</h3>
+                <p><strong>Important:</strong> This app currently doesn't support real-time collaboration. To share data with Sam:</p>
+                <ol style="margin-left: 20px; margin-top: 10px; margin-bottom: 10px; color: #4a5568;">
+                    <li>Copy this code and save it as an HTML file on your computer</li>
+                    <li>Host it on a shared platform like GitHub Pages, Netlify, or Vercel</li>
+                    <li>Or use a collaborative tool like Google Drive to share the file</li>
+                </ol>
+                <p>For true real-time collaboration, you would need a backend server with a database, which is beyond the scope of this implementation.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize data - since we can't use persistent storage, we'll use memory
+        let transactions = [];
+        let zaydBalance = 0;
+        let samBalance = 0;
+        
+        // Calculate balances
+        function calculateBalances() {
+            zaydBalance = 0;
+            samBalance = 0;
+            
+            transactions.forEach(transaction => {
+                if (transaction.payer === 'zayd') {
+                    // Zayd paid, so Sam owes half
+                    samBalance += transaction.amount / 2;
+                    zaydBalance -= transaction.amount / 2;
+                } else {
+                    // Sam paid, so Zayd owes half
+                    zaydBalance += transaction.amount / 2;
+                    samBalance -= transaction.amount / 2;
+                }
+            });
+            
+            updateDisplay();
+        }
+        
+        // Update the display
+        function updateDisplay() {
+            const debtDisplay = document.querySelector('.debt-display');
+            const title = document.getElementById('title');
+            
+            if (zaydBalance === 0 && samBalance === 0) {
+                debtDisplay.innerHTML = `
+                    <div class="debt-title">Current Balance</div>
+                    <p class="debt-info neutral">No debts recorded yet</p>
+                `;
+                title.textContent = "Who's in Debt?";
+            } else if (zaydBalance > 0) {
+                debtDisplay.innerHTML = `
+                    <div class="debt-title">Current Balance</div>
+                    <div class="debt-amount">${formatCurrency(zaydBalance)}</div>
+                    <p class="debt-info negative">Sam owes Zayd ${formatCurrency(zaydBalance)}</p>
+                `;
+                title.textContent = "Sam is in Debt";
+            } else if (samBalance > 0) {
+                debtDisplay.innerHTML = `
+                    <div class="debt-title">Current Balance</div>
+                    <div class="debt-amount">${formatCurrency(samBalance)}</div>
+                    <p class="debt-info negative">Zayd owes Sam ${formatCurrency(samBalance)}</p>
+                `;
+                title.textContent = "Zayd is in Debt";
+            } else {
+                debtDisplay.innerHTML = `
+                    <div class="debt-title">Current Balance</div>
+                    <p class="debt-info positive">All debts are settled!</p>
+                `;
+                title.textContent = "No One is in Debt";
+            }
+        }
+        
+        // Format currency
+        function formatCurrency(amount) {
+            return '$' + Math.abs(amount).toFixed(2);
+        }
+        
+        // Add a new transaction
+        document.getElementById('add-transaction').addEventListener('click', function() {
+            const payer = document.getElementById('payer').value;
+            const amountInput = document.getElementById('amount').value;
+            const description = document.getElementById('description').value || 'No description';
+            const amount = parseFloat(amountInput);
+            
+            if (isNaN(amount) || amount <= 0) {
+                alert('Please enter a valid amount');
+                return;
+            }
+            
+            const transaction = {
+                id: Date.now(),
+                payer,
+                amount,
+                description
+            };
+            
+            transactions.push(transaction);
+            
+            document.getElementById('amount').value = '';
+            document.getElementById('description').value = '';
+            
+            calculateBalances();
+            updateHistory();
+        });
+        
+        // Update transaction history
+        function updateHistory() {
+            const transactionList = document.getElementById('transaction-list');
+            
+            if (transactions.length === 0) {
+                transactionList.innerHTML = '<div class="no-transactions">No transactions yet</div>';
+                return;
+            }
+            
+            // Sort transactions by time (newest first)
+            const sortedTransactions = [...transactions].reverse();
+            
+            transactionList.innerHTML = '';
+            sortedTransactions.forEach(transaction => {
+                const transactionEl = document.createElement('div');
+                transactionEl.className = 'transaction-item';
+                
+                const owedTo = transaction.payer === 'zayd' ? 'Sam' : 'Zayd';
+                const halfAmount = transaction.amount / 2;
+                
+                transactionEl.innerHTML = `
+                    <div class="transaction-info">
+                        <div class="transaction-title">${transaction.description}</div>
+                        <div class="transaction-details">${transaction.payer.charAt(0).toUpperCase() + transaction.payer.slice(1)} paid $${transaction.amount.toFixed(2)} 
+                        (${owedTo} owes $${halfAmount.toFixed(2)})</div>
+                    </div>
+                    <div class="transaction-amount">${formatCurrency(halfAmount)}</div>
+                `;
+                
+                transactionList.appendChild(transactionEl);
+            });
+        }
+        
+        // Clear all data
+        document.getElementById('clear-all').addEventListener('click', function() {
+            if (confirm('Are you sure you want to clear all transactions? This cannot be undone.')) {
+                transactions = [];
+                calculateBalances();
+                updateHistory();
+            }
+        });
+        
+        // Initialize on page load
+        calculateBalances();
+        updateHistory();
+    </script>
+</body>
+</html>
